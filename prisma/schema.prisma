@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AccountType {
+  BANK
+  CASH
+  CREDIT
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+enum InsightType {
+  TIP
+  WARNING
+  SUMMARY
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  accounts     Account[]
+  transactions Transaction[]
+  insights     AIInsight[]
+
+  @@map("users")
+}
+
+model Account {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  type         AccountType
+  balance      Decimal       @default(0) @db.Decimal(14, 2)
+  currency     String        @default("USD")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Transaction {
+  id              String          @id @default(cuid())
+  accountId       String
+  account         Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount          Decimal         @db.Decimal(14, 2)
+  type            TransactionType
+  category        String          @default("Uncategorized")
+  description     String
+  rawDescription  String?
+  date            DateTime
+  isAIClassified  Boolean         @default(false)
+  importBatchId   String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId, date])
+  @@index([accountId])
+  @@index([category])
+  @@map("transactions")
+}
+
+model AIInsight {
+  id        String      @id @default(cuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  type      InsightType
+  createdAt DateTime    @default(now())
+
+  @@index([userId, createdAt])
+  @@map("ai_insights")
+}
