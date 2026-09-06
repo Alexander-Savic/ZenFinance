@@ -18,7 +18,6 @@ class ImportError extends Error {
  
 export async function POST(request: NextRequest) {
   try {
-    // 💡 Автоматически извлекаем или создаем демо-пользователя в Neon PostgreSQL
     let user = await prisma.user.findFirst();
     if (!user) {
       user = await prisma.user.create({
@@ -39,7 +38,6 @@ export async function POST(request: NextRequest) {
  
     const file = formData.get("file");
     
-    // Автоматически находим или создаем счет
     let account = await prisma.account.findFirst({ where: { userId } });
     if (!account) {
       account = await prisma.account.create({
@@ -75,14 +73,11 @@ export async function POST(request: NextRequest) {
       );
     }
  
-    // Читаем контент файла в буфер
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
  
-    // 1. Вызываем наш парсер утилит
     const parsedRows = parseStatementFile(buffer, file.name);
  
-    // 2. Формируем массив для нашего локального ИИ-анализатора
     const categorizationInputs = parsedRows.map((row, index) => ({
       id: String(index),
       description: row.description,
@@ -90,12 +85,10 @@ export async function POST(request: NextRequest) {
       type: row.type,
     }));
  
-    // 3. Распределяем по умным категориям
     const categorizedResults = await categorizeTransactions(categorizationInputs);
     const categoryMap = new Map<string, string>();
     categorizedResults.forEach((r) => categoryMap.set(r.id, r.category));
  
-    // 4. Безопасно сохраняем транзакции в базу данных одной SQL-транзакцией
     const createdCount = await prisma.$transaction(async (tx: any) => {
       const result = await tx.transaction.createMany({
         data: parsedRows.map((row, index) => ({
@@ -104,7 +97,6 @@ export async function POST(request: NextRequest) {
           date: row.date,
           amount: row.amount,
           description: row.description,
-          // Указываем обязательный тип транзакции
           type: row.type, 
           category: categoryMap.get(String(index)) ?? "Other",
           isAIClassified: true,
@@ -113,16 +105,15 @@ export async function POST(request: NextRequest) {
       return result.count;
     });
  
-    // 5. Перерасчитываем итоговый баланс аккаунта
     const aggregations = await prisma.transaction.groupBy({
       by: ["type"],
       where: { accountId: account.id },
       _sum: { amount: true },
     });
  
-    const income = Number(aggregations.find((a) => a.type === "INCOME")?._sum.amount ?? 0);
-    const expense = Number(aggregations.find((a) => a.type === "EXPENSE")?._sum.amount ?? 0);
- 
+    const income = Number(aggregations.find((a: any) => a.type === "INCOME")?._sum.amount ?? 0);
+    const expense = Number(aggregations.find((a: any) => a.type === "EXPENSE")?._sum.amount ?? 0);
+
     await prisma.account.update({
       where: { id: account.id },
       data: { balance: income - expense },
