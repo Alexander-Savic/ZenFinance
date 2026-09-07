@@ -8,6 +8,8 @@ import { CashflowAreaChart } from '../components/dashboard/cashflow-area-chart';
 import { TransactionTable } from '../components/dashboard/transaction-table';
 import { UploadDropzone } from '../components/dashboard/upload-dropzone';
 import { Loader2 } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 
 export default function DashboardPage() {
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
@@ -31,7 +33,6 @@ export default function DashboardPage() {
     );
   }
 
-  // Дефолтные пустые данные, если сервер пока ничего не вернул
   const safeSummary = summary || {
     totalIncome: 0,
     totalExpense: 0,
@@ -48,6 +49,12 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-semibold tracking-tight">ZenFinance</h1>
             <p className="text-sm text-zinc-500">Your finances, structured by AI.</p>
           </div>
+          <button
+            onClick={() => signOut({ callbackUrl: '/login' })}
+            className="flex items-center gap-2 rounded-xl border border-white/10 bg-zinc-950 px-4 py-2 text-xs font-medium text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-zinc-200">
+            <LogOut className="h-3.5 w-3.5" />
+            Выйти
+          </button>
         </header>
 
         <SummaryCards
