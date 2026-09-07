@@ -27,7 +27,8 @@ export interface TransactionsPage {
 
 export interface ImportResponse {
   success: boolean;
-  importedCount: number;
+  totalImported: number;
+  aiClassifiedCount: number;
   message?: string;
 }
 
@@ -62,12 +63,12 @@ export const api = {
   },
   
   importFile: async (file: File): Promise<ImportResponse> => {
-    const form = new FormData();
-    form.append('file', file);
-    
-    return request<ImportResponse>(`/api/transactions/import`, {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return request<ImportResponse>('/api/transactions/import', {
       method: 'POST',
-      body: form,
+      body: formData,
     });
   },
 };

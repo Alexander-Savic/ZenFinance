@@ -3,11 +3,17 @@
 import { useCallback, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileSpreadsheet, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { api } from '@/lib/api';
+import { api, type ImportResponse } from '@/lib/api';
 
 type Status = 'idle' | 'dragging' | 'uploading' | 'success' | 'error';
 
-export function UploadDropzone() {
+// 1. Объявляем интерфейс пропсов для компонента
+interface UploadDropzoneProps {
+  onUploadSuccess?: () => void;
+}
+
+// 2. Принимаем проп onUploadSuccess
+export function UploadDropzone({ onUploadSuccess }: UploadDropzoneProps) {
   const [status, setStatus] = useState<Status>('idle');
   const [fileName, setFileName] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
@@ -18,19 +24,26 @@ export function UploadDropzone() {
       setFileName(file.name);
       setStatus('uploading');
       try {
-        const res = await api.importFile(file);
+        const res: ImportResponse = await api.importFile(file);
         setMessage(`Imported ${res.totalImported} transactions · ${res.aiClassifiedCount} auto-categorized`);
         setStatus('success');
-        setTimeout(() => {
-          window.location.reload();
-        }, 2500);
-      } catch (err) {
+
+        // 3. Вызываем обновляющий коллбэк для главной страницы
+        if (onUploadSuccess) {
+          onUploadSuccess();
+        } else {
+          setTimeout(() => {
+            window.location.reload();
+          }, 2500);
+        }
+      } catch (err: unknown) {
         console.error(err);
-        setMessage('Import failed. Check the file format and try again.');
+        const errorMsg = err instanceof Error ? err.message : 'Import failed. Check the file format and try again.';
+        setMessage(errorMsg);
         setStatus('error');
       }
     },
-    [],
+    [onUploadSuccess],
   );
 
   const onDrop = (e: React.DragEvent) => {
