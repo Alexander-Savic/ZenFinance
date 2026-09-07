@@ -1,35 +1,31 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../../lib/auth";
+import { authOptions } from "../../../../lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
+    // 1. Безопасно извлекаем сессию текущего пользователя на уровне сервера
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     const userId = (session.user as any).id;
 
-    let user = await prisma.user.findFirst();
-    if (!user) {
-      user = await prisma.user.create({
-        data: { email: "demo@zenfinance.com", passwordHash: "demo_hash" },
-      });
-    }
-    const userId = user.id;
-
+    // 2. Получаем количество месяцев из query-параметров (по умолчанию 6)
     const { searchParams } = new URL(request.url);
     const months = Math.max(1, parseInt(searchParams.get("months") || "6", 10));
 
+    // Вычисляем начальную дату фильтрации (ровно N месяцев назад с начала месяца)
     const since = new Date();
     since.setMonth(since.getMonth() - months);
     since.setDate(1);
     since.setHours(0, 0, 0, 0);
 
+    // 3. Вытаскиваем транзакции из Neon PostgreSQL строго для текущего userId
     const transactions = await prisma.transaction.findMany({
       where: { userId, date: { gte: since } },
       select: { amount: true, type: true, category: true, date: true },
@@ -38,6 +34,7 @@ export async function GET(request: NextRequest) {
     const byCategory = new Map<string, number>();
     const byMonth = new Map<string, { income: number; expense: number }>();
 
+    // Агрегируем данные в памяти
     for (const tx of transactions) {
       const amount = Number(tx.amount);
       const monthKey = `${tx.date.getFullYear()}-${String(tx.date.getMonth() + 1).padStart(2, "0")}`;
@@ -55,6 +52,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Формируем распределение расходов по категориям
     const categoryBreakdown = Array.from(byCategory.entries())
       .map(([category, total]) => ({
         category,
@@ -62,6 +60,7 @@ export async function GET(request: NextRequest) {
       }))
       .sort((a, b) => b.total - a.total);
 
+    // Формируем тренд по месяцам
     const monthlyTrend = Array.from(byMonth.entries())
       .map(([month, v]) => ({
         month,
@@ -71,6 +70,7 @@ export async function GET(request: NextRequest) {
       }))
       .sort((a, b) => a.month.localeCompare(b.month));
 
+    // Считаем общие агрегаты
     const totalIncome = monthlyTrend.reduce((s, m) => s + m.income, 0);
     const totalExpense = monthlyTrend.reduce((s, m) => s + m.expense, 0);
 
