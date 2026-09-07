@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
-import { api, TransactionItem } from '../../lib/api';
-import { cn, formatCurrency, categoryColor } from '../../lib/utils';
+import { api, TransactionItem } from '@/lib/api';
+import { cn, formatCurrency, categoryColor } from '@/lib/utils';
 
 const CATEGORIES = [
   'All',

@@ -35,12 +35,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(path, options);
 
   if (!res.ok) {
-    // 1. Авто-переход на страницу входа при потере сессии
     if (res.status === 401 && typeof window !== 'undefined') {
       window.location.href = '/login';
     }
 
-    // 2. Попытка извлечь понятное сообщение об ошибке из JSON ответа
     const errorData = await res.json().catch(() => null);
     const errorMessage = errorData?.message || errorData?.error || `Request failed with status ${res.status}`;
     
@@ -67,7 +65,6 @@ export const api = {
     const form = new FormData();
     form.append('file', file);
     
-    // Передаем FormData через центральную функцию request
     return request<ImportResponse>(`/api/transactions/import`, {
       method: 'POST',
       body: form,

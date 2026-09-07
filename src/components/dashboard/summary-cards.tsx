@@ -1,5 +1,5 @@
 import { ArrowUpRight, ArrowDownRight, Wallet } from 'lucide-react';
-import { formatCurrency, cn } from '../../lib/utils';
+import { formatCurrency, cn } from '@/lib/utils';
 
 interface Props {
   totalIncome: number;

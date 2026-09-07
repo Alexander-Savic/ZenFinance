@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
-import { parseStatementFile } from "../../../../utils/statement-parser";
-import { categorizeTransactions } from "../../../../utils/ai-categorizer";
+import { prisma } from "@/lib/prisma";
+import { parseStatementFile } from "@/utils/statement-parser";
+import { categorizeTransactions } from "@/utils/ai-categorizer";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../../lib/auth";
+import { authOptions } from "@/lib/auth";
  
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

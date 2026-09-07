@@ -3,7 +3,7 @@
 import { useCallback, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileSpreadsheet, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { api } from '../../lib/api';
+import { api } from '@/lib/api';
 
 type Status = 'idle' | 'dragging' | 'uploading' | 'success' | 'error';
 
@@ -21,8 +21,6 @@ export function UploadDropzone() {
         const res = await api.importFile(file);
         setMessage(`Imported ${res.totalImported} transactions · ${res.aiClassifiedCount} auto-categorized`);
         setStatus('success');
-        
-        // Быстро перезагрузим страницу через 2.5 секунды, чтобы графики и таблица обновили данные
         setTimeout(() => {
           window.location.reload();
         }, 2500);
