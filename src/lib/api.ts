@@ -25,19 +25,35 @@ export interface TransactionsPage {
   totalPages: number;
 }
 
-// Универсальная функция для отправки сетевых запросов к Next.js API
+export interface ImportResponse {
+  success: boolean;
+  importedCount: number;
+  message?: string;
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(path, options);
-  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+
+  if (!res.ok) {
+    // 1. Авто-переход на страницу входа при потере сессии
+    if (res.status === 401 && typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
+
+    // 2. Попытка извлечь понятное сообщение об ошибке из JSON ответа
+    const errorData = await res.json().catch(() => null);
+    const errorMessage = errorData?.message || errorData?.error || `Request failed with status ${res.status}`;
+    
+    throw new Error(errorMessage);
+  }
+
   return res.json();
 }
 
 export const api = {
-  // 1. Получение данных для графиков и Bento-карточек
   getSummary: (months = 6) => 
     request<AnalyticsSummary>(`/api/analytics/summary?months=${months}`),
     
-  // 2. Получение списка транзакций для таблицы с фильтрами и пагинацией
   getTransactions: (params: { category?: string; accountId?: string; page?: number; pageSize?: number }) => {
     const qs = new URLSearchParams();
     if (params.category) qs.set('category', params.category);
@@ -47,16 +63,14 @@ export const api = {
     return request<TransactionsPage>(`/api/transactions?${qs.toString()}`);
   },
   
-  // 3. Отправка .csv или .xlsx файла в ИИ-разметчик на бэкенд
-  importFile: async (file: File) => {
+  importFile: async (file: File): Promise<ImportResponse> => {
     const form = new FormData();
     form.append('file', file);
     
-    const res = await fetch(`/api/transactions/import`, {
+    // Передаем FormData через центральную функцию request
+    return request<ImportResponse>(`/api/transactions/import`, {
       method: 'POST',
       body: form,
     });
-    if (!res.ok) throw new Error('Import failed');
-    return res.json();
   },
 };
