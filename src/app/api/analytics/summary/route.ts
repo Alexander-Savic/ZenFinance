@@ -14,6 +14,12 @@ export async function GET(request: NextRequest) {
     }
     const userId = (session.user as any).id;
 
+    const aggregations = await prisma.transaction.groupBy({
+      by: ["type"],
+      where: { userId },
+      _sum: { amount: true },
+    });
+
     const { searchParams } = new URL(request.url);
     const months = Math.max(1, parseInt(searchParams.get("months") || "6", 10));
 
@@ -72,7 +78,7 @@ export async function GET(request: NextRequest) {
       totalExpense: Math.round(totalExpense * 100) / 100,
       netSavings: Math.round((totalIncome - totalExpense) * 100) / 100,
       categoryBreakdown,
-      monthlyTrend,
+      monthlyTrend: [],
     });
 
   } catch (error) {
