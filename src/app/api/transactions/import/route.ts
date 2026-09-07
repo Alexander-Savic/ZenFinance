@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
         data: { email: "demo@zenfinance.com", passwordHash: "demo_hash" }
       });
     }
-    const userId = user.id;
  
     let formData: FormData;
     try {
