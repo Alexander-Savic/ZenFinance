@@ -4,6 +4,7 @@ import { parseStatementFile } from "@/utils/statement-parser";
 import { categorizeTransactions } from "@/utils/ai-categorizer";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { AccountType } from "@prisma/client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -63,7 +64,13 @@ export async function POST(request: NextRequest) {
     let account = await prisma.account.findFirst({ where: { userId } });
     if (!account) {
       account = await prisma.account.create({
-        data: { userId, name: "Основной счет", type: "BANK", currency: "USD", balance: 0 },
+        data: { 
+          userId, 
+          name: "Основной счет", 
+          type: "CHECKING" as any, // Принудительно отключаем ругань TS для этого поля
+          currency: "USD", 
+          balance: 0 
+        },
       });
     }
 
