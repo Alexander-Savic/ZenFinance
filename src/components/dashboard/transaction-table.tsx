@@ -73,7 +73,6 @@ export function TransactionTable({ accountId, onMutated, currency = 'BYN' }: Tra
     setPage(1);
   }, [accountId]);
 
-  // Функция удаления транзакции
   const handleDelete = async (id: string) => {
     if (!confirm('Вы уверены, что хотите удалить эту транзакцию?')) return;
 

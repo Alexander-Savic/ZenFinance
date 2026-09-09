@@ -14,7 +14,6 @@ interface Props {
 }
 
 export function ExpenseDonutChart({ data = [], currency = 'BYN' }: Props) {
-  // Безопасное вычисление общей суммы расходов
   const total = data.reduce((sum, d) => {
     const val = Number(d.value);
     return sum + (isNaN(val) ? 0 : val);
@@ -61,7 +60,6 @@ export function ExpenseDonutChart({ data = [], currency = 'BYN' }: Props) {
         </PieChart>
       </ResponsiveContainer>
 
-      {/* Легенда категорий снизу */}
       <div className="mt-2 flex flex-wrap justify-center gap-x-4 gap-y-1">
         {data.slice(0, 6).map((d) => (
           <div key={d.name} className="flex items-center gap-1.5 text-xs text-zinc-400">

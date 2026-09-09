@@ -22,8 +22,6 @@ export default function DashboardPage() {
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  // Ключ для принудительного обновления счетов, таблицы и графиков
   const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchSummary = useCallback(() => {
@@ -35,10 +33,9 @@ export default function DashboardPage() {
       .finally(() => setIsLoading(false));
   }, [selectedAccountId]);
 
-  // Вызывается при создании транзакции / загрузке выписки
   const handleMutation = useCallback(() => {
     fetchSummary();
-    setRefreshKey((prev) => prev + 1); // Сигнал для перезагрузки счетов и таблицы
+    setRefreshKey((prev) => prev + 1); 
   }, [fetchSummary]);
 
   useEffect(() => {
@@ -66,7 +63,6 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-zinc-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black p-6 font-sans text-zinc-50 md:p-10">
       <div className="mx-auto max-w-7xl space-y-8">
         
-        {/* Шапка */}
         <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-medium tracking-tight text-white md:text-3xl">
@@ -118,7 +114,6 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* Интерактивные счета (key заставит перезапросить счета и их балансы) */}
         <AccountSelector
           key={refreshKey}
           selectedAccountId={selectedAccountId}
@@ -126,7 +121,6 @@ export default function DashboardPage() {
           userCurrency={userCurrency}
         />
 
-        {/* Сводка карточек */}
         {isLoading || !summary ? (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -142,7 +136,6 @@ export default function DashboardPage() {
           />
         )}
 
-        {/* Графики */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl lg:col-span-1">
             <h3 className="mb-2 text-sm font-medium text-zinc-200">Распределение расходов</h3>
@@ -161,7 +154,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Дропзона и AI */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <UploadDropzone onSuccess={handleMutation} />
@@ -169,7 +161,6 @@ export default function DashboardPage() {
           <AIAdvisorCard />
         </div>
 
-        {/* Таблица транзакций */}
         <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
           <h3 className="mb-4 text-sm font-medium text-zinc-200">История транзакций</h3>
           <TransactionTable
@@ -180,7 +171,6 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Модальное окно создания транзакции */}
         <AddTransactionModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

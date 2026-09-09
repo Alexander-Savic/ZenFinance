@@ -5,7 +5,6 @@ import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
-// GET: Получение настроек и данных текущего пользователя
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -21,7 +20,7 @@ export async function GET() {
         email: true,
         currency: true,
         transactionsPerPage: true,
-        createdAt: true, // Добавлено поле даты создания
+        createdAt: true, 
       },
     });
 
@@ -29,7 +28,6 @@ export async function GET() {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
-    // Подсчитываем реальное количество привязанных счетов
     const linkedAccounts = await prisma.account.count({
       where: { userId: session.user.id },
     });
@@ -52,7 +50,6 @@ export async function GET() {
   }
 }
 
-// PUT: Обновление настроек пользователя
 export async function PUT(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

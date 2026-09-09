@@ -12,7 +12,7 @@ interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  selectedAccountId?: string | null; // Передаем активный счёт
+  selectedAccountId?: string | null;
 }
 
 export function AddTransactionModal({
@@ -37,7 +37,6 @@ export function AddTransactionModal({
           const accs = data.accounts || data || [];
           setAccounts(accs);
 
-          // Если активен конкретный счёт — подставляем его, иначе берём первый из списка
           if (selectedAccountId) {
             setAccountId(selectedAccountId);
           } else if (accs.length > 0) {

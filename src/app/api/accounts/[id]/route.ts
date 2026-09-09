@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> } // Указываем, что params — это Promise
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -13,14 +13,12 @@ export async function DELETE(
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
 
-    // Распаковываем params через await
     const { id: accountId } = await params;
 
     if (!accountId) {
       return NextResponse.json({ message: 'ID счёта не указан' }, { status: 400 });
     }
 
-    // Проверяем, принадлежит ли счёт текущему пользователю
     const account = await prisma.account.findFirst({
       where: {
         id: accountId,
@@ -35,12 +33,10 @@ export async function DELETE(
       );
     }
 
-    // Удаляем связанные транзакции
     await prisma.transaction.deleteMany({
       where: { accountId },
     });
 
-    // Удаляем сам счёт
     await prisma.account.delete({
       where: { id: accountId },
     });

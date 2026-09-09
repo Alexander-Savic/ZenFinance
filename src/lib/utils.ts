@@ -2,16 +2,16 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 const COLOR_PALETTE = [
-  '#6366f1', // Indigo
-  '#10b981', // Emerald
-  '#f59e0b', // Amber
-  '#ec4899', // Pink
-  '#8b5cf6', // Purple
-  '#06b6d4', // Cyan
-  '#f97316', // Orange
-  '#14b8a6', // Teal
-  '#3b82f6', // Blue
-  '#ef4444', // Red
+  '#6366f1', 
+  '#10b981', 
+  '#f59e0b', 
+  '#ec4899', 
+  '#8b5cf6',
+  '#06b6d4', 
+  '#f97316', 
+  '#14b8a6', 
+  '#3b82f6',
+  '#ef4444',
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -63,12 +63,10 @@ export function categoryColor(category: string, index: number = 0): string {
   
   const key = category.toLowerCase().trim();
   
-  // Если есть прямое совпадение по названию
   if (CATEGORY_COLORS[key]) {
     return CATEGORY_COLORS[key];
   }
 
-  // Для незнакомых категорий генерируем стабильный цвет на основе строки или индекса
   let hash = 0;
   for (let i = 0; i < key.length; i++) {
     hash = key.charCodeAt(i) + ((hash << 5) - hash);

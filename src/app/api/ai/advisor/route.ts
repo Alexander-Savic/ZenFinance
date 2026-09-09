@@ -144,7 +144,6 @@ export async function POST(req: NextRequest) {
   });
 }
 
-// Добавляем поддержку GET-запросов
 export async function GET(req: NextRequest) {
   return POST(req);
 }

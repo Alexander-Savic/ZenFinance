@@ -70,7 +70,7 @@ export function AccountSelector({
   };
 
   const handleDeleteAccount = async (e: React.MouseEvent, accountId: string, accountName: string) => {
-    e.stopPropagation(); // Предотвращаем переключение счёта при клике на корзину
+    e.stopPropagation();
 
     if (!confirm(`Вы действительно хотите удалить счёт «${accountName}» и связанные с ним транзакции?`)) {
       return;
@@ -80,12 +80,10 @@ export function AccountSelector({
     try {
       await api.deleteAccount(accountId);
 
-      // Если удаляем текущий выбранный счёт — сбрасываем выбор на "Все счета"
       if (selectedAccountId === accountId && onSelectAccount) {
         onSelectAccount(null);
       }
 
-      // Обновляем список счетов
       fetchAccounts();
     } catch (err) {
       console.error('Failed to delete account:', err);
@@ -185,7 +183,6 @@ export function AccountSelector({
 
               {isSelected && <Check className="h-3.5 w-3.5 text-violet-400 shrink-0" />}
 
-              {/* Кнопка удаления (появляется при наведении) */}
               <button
                 type="button"
                 onClick={(e) => handleDeleteAccount(e, acc.id, acc.name)}

@@ -38,7 +38,6 @@ export default function ProfilePage() {
     });
   }, []);
 
-  // Форматирование даты регистрации
   const formatDate = (dateString?: string) => {
     if (!dateString) return '—';
     const date = new Date(dateString);
@@ -49,7 +48,6 @@ export default function ProfilePage() {
     }).format(date);
   };
 
-  // Инициалы для аватара
   const getInitials = (name?: string | null, email?: string) => {
     if (name && name.trim().length > 0) {
       const parts = name.trim().split(' ');
@@ -59,7 +57,6 @@ export default function ProfilePage() {
     return email ? email.slice(0, 2).toUpperCase() : 'U';
   };
 
-  // Форматирование суммы с валютой
   const formatCurrency = (val: number = 0, currency = 'USD') => {
     return new Intl.NumberFormat('ru-RU', {
       style: 'currency',
@@ -82,7 +79,6 @@ export default function ProfilePage() {
     <main className="min-h-screen bg-zinc-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black p-6 font-sans text-zinc-50 md:p-10">
       <div className="mx-auto max-w-4xl space-y-8">
         
-        {/* Навигация назад */}
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard"
@@ -101,16 +97,13 @@ export default function ProfilePage() {
           </Link>
         </div>
 
-        {/* Главная карточка профиля */}
         <div className="rounded-3xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl md:p-8">
           <div className="flex flex-col items-center text-center md:flex-row md:text-left md:items-start gap-6">
             
-            {/* Аватар */}
             <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-600 to-indigo-700 text-3xl font-bold text-white shadow-xl shadow-violet-500/10 border border-white/20">
               {getInitials(user?.name, user?.email)}
             </div>
 
-            {/* Основная информация */}
             <div className="space-y-4 flex-1">
               <div>
                 <h1 className="text-2xl font-bold text-white md:text-3xl">
@@ -147,13 +140,11 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Секция финансовой сводки */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-white">Финансовая сводка (за 6 месяцев)</h2>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             
-            {/* Доходы */}
             <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-400">Общий доход</span>
@@ -166,7 +157,6 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            {/* Расходы */}
             <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-400">Общий расход</span>
@@ -179,7 +169,6 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            {/* Баланс / Накопления */}
             <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-zinc-400">Накопления</span>

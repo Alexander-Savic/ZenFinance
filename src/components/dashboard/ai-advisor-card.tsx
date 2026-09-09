@@ -21,7 +21,7 @@ export function AIAdvisorCard() {
     setIsLoading(true);
     setError(null);
     api
-      .getAdvice() // <-- Здесь должен быть именно getAdvice
+      .getAdvice()
       .then((res) => setTips(res.tips))
       .catch((err) => setError(err instanceof Error ? err.message : 'Не удалось получить рекомендации'))
       .finally(() => setIsLoading(false));

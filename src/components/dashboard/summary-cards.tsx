@@ -25,7 +25,6 @@ export function SummaryCards({
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      {/* TOTAL INCOME */}
       <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
         <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
           TOTAL INCOME
@@ -36,7 +35,6 @@ export function SummaryCards({
         </p>
       </div>
 
-      {/* TOTAL EXPENSES */}
       <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
         <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
           TOTAL EXPENSES
@@ -47,7 +45,6 @@ export function SummaryCards({
         </p>
       </div>
 
-      {/* NET SAVINGS */}
       <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
         <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
           NET SAVINGS

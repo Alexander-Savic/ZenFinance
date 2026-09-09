@@ -11,13 +11,11 @@ export async function computeAnalyticsSummary(
   since.setDate(1);
   since.setHours(0, 0, 0, 0);
 
-  // Формируем динамическое условие поиска
   const whereCondition: any = {
     userId,
     date: { gte: since },
   };
 
-  // Если выбран конкретный счёт — добавляем фильтр по accountId
   if (accountId) {
     whereCondition.accountId = accountId;
   }
@@ -46,7 +44,6 @@ export async function computeAnalyticsSummary(
     }
   }
 
-  // Приводим структуру категорий к совпадению с компонентами (name / value)
   const categoryBreakdown = Array.from(byCategory.entries())
     .map(([category, total]) => ({
       name: category,

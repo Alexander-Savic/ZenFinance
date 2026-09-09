@@ -4,7 +4,6 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { AccountType } from '@prisma/client';
 
-// 1. ОБРАБОТЧИК GET (Получение всех счетов текущего пользователя)
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -24,7 +23,6 @@ export async function GET() {
   }
 }
 
-// 2. ОБРАБОТЧИК POST (Создание нового счета)
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -39,7 +37,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Name is required' }, { status: 400 });
     }
 
-    // Автоматический подбор допустимого типа из AccountType Enum
     const validTypes = Object.values(AccountType);
     const matchedType = validTypes.find(
       (t) => String(t).toLowerCase() === String(type).toLowerCase()

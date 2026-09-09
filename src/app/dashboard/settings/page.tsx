@@ -10,8 +10,6 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
-
-  // Форма
   const [name, setName] = useState('');
   const [currency, setCurrency] = useState('USD');
   const [transactionsPerPage, setTransactionsPerPage] = useState(10);
@@ -63,7 +61,6 @@ export default function SettingsPage() {
     <main className="min-h-screen bg-zinc-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-black p-6 font-sans text-zinc-50 md:p-10">
       <div className="mx-auto max-w-3xl space-y-8">
         
-        {/* Кнопка назад и заголовок */}
         <div className="flex items-center justify-between">
           <Link
             href="/dashboard"
@@ -74,7 +71,6 @@ export default function SettingsPage() {
           </Link>
         </div>
 
-        {/* Карточка карточки профиля */}
         <div className="rounded-3xl border border-white/10 bg-zinc-900/40 p-6 backdrop-blur-xl md:p-8">
           <div className="flex items-center gap-4 pb-6 border-b border-white/10">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-500 text-2xl font-bold text-white shadow-lg shadow-indigo-500/20">
@@ -92,11 +88,9 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Форма редактирования */}
           <form onSubmit={handleSave} className="mt-8 space-y-6">
             <div className="space-y-4">
               
-              {/* Имя */}
               <div>
                 <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-zinc-400">
                   Отображаемое имя
@@ -113,7 +107,6 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Основная валюта */}
               <div>
                 <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-zinc-400">
                   Основная валюта
@@ -136,7 +129,6 @@ export default function SettingsPage() {
 
             </div>
 
-            {/* Сохранение */}
             <div className="flex items-center justify-between pt-4 border-t border-white/10">
               <span className="text-xs text-zinc-500">
                 Создан: {settings?.createdAt ? new Date(settings.createdAt).toLocaleDateString() : '—'}
