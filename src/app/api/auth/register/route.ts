@@ -28,11 +28,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Валидация входных данных через Zod
     const validationResult = registerSchema.safeParse(rawBody);
 
     if (!validationResult.success) {
-      // Собираем читаемый список ошибок по полям
       const formattedErrors = validationResult.error.flatten().fieldErrors;
       
       return NextResponse.json(
@@ -45,10 +43,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Безопасно извлекаем валидированные и типизированные данные
     const { email, password } = validationResult.data;
 
-    // Проверка на существование пользователя
     const existingUser = await prisma.user.findUnique({ where: { email } });
 
     if (existingUser) {
@@ -58,7 +54,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Хэширование пароля и создание пользователя
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({

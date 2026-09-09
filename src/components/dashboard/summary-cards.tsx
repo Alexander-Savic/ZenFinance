@@ -1,35 +1,62 @@
-import { ArrowUpRight, ArrowDownRight, Wallet } from 'lucide-react';
-import { formatCurrency, cn } from '@/lib/utils';
+'use client';
 
-interface Props {
-  totalIncome: number;
-  totalExpense: number;
-  netSavings: number;
+interface SummaryCardsProps {
+  totalIncome?: number | string | null;
+  totalExpense?: number | string | null;
+  netSavings?: number | string | null;
+  currency?: string;
 }
 
-export function SummaryCards({ totalIncome, totalExpense, netSavings }: Props) {
-  const cards = [
-    { label: 'Total Income', value: totalIncome, icon: ArrowUpRight, accent: 'text-emerald-400' },
-    { label: 'Total Expenses', value: totalExpense, icon: ArrowDownRight, accent: 'text-red-400' },
-    { label: 'Net Savings', value: netSavings, icon: Wallet, accent: netSavings >= 0 ? 'text-emerald-400' : 'text-red-400' },
-  ];
+const safeNumber = (val: any): number => {
+  if (val === null || val === undefined) return 0;
+  const num = typeof val === 'number' ? val : parseFloat(String(val));
+  return isNaN(num) ? 0 : num;
+};
+
+export function SummaryCards({
+  totalIncome = 0,
+  totalExpense = 0,
+  netSavings = 0,
+  currency = 'BYN',
+}: SummaryCardsProps) {
+  const income = safeNumber(totalIncome);
+  const expense = safeNumber(totalExpense);
+  const savings = safeNumber(netSavings);
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      {cards.map((c) => (
-        <div
-          key={c.label}
-          className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs uppercase tracking-wider text-zinc-500">{c.label}</span>
-            <c.icon className={cn('h-4 w-4', c.accent)} />
-          </div>
-          <p className={cn('mt-3 text-2xl font-semibold', c.accent)}>
-            {formatCurrency(c.value)}
-          </p>
-        </div>
-      ))}
+      {/* TOTAL INCOME */}
+      <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
+        <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          TOTAL INCOME
+        </span>
+        <p className="mt-2 text-2xl font-bold font-mono text-emerald-400">
+          {income.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{' '}
+          <span className="text-sm font-normal text-emerald-500/80">{currency}</span>
+        </p>
+      </div>
+
+      {/* TOTAL EXPENSES */}
+      <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
+        <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          TOTAL EXPENSES
+        </span>
+        <p className="mt-2 text-2xl font-bold font-mono text-rose-400">
+          {expense.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{' '}
+          <span className="text-sm font-normal text-rose-500/80">{currency}</span>
+        </p>
+      </div>
+
+      {/* NET SAVINGS */}
+      <div className="rounded-2xl border border-white/10 bg-zinc-900/40 p-5 backdrop-blur-xl">
+        <span className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+          NET SAVINGS
+        </span>
+        <p className={`mt-2 text-2xl font-bold font-mono ${savings >= 0 ? 'text-white' : 'text-rose-400'}`}>
+          {savings.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}{' '}
+          <span className="text-sm font-normal text-zinc-400">{currency}</span>
+        </p>
+      </div>
     </div>
   );
 }

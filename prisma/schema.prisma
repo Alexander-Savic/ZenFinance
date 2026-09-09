@@ -7,9 +7,11 @@ datasource db {
 }
 
 enum AccountType {
-  BANK
-  CASH
+  CHECKING
+  SAVINGS
   CREDIT
+  INVESTMENT
+  CASH
 }
 
 enum TransactionType {
@@ -24,14 +26,17 @@ enum InsightType {
 }
 
 model User {
-  id           String        @id @default(cuid())
-  email        String        @unique
-  passwordHash String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  accounts     Account[]
-  transactions Transaction[]
-  insights     AIInsight[]
+  id                  String        @id @default(cuid())
+  email               String        @unique
+  passwordHash        String
+  name                String?
+  currency            String   @default("BYN")
+  transactionsPerPage Int           @default(10)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  accounts            Account[]
+  transactions        Transaction[]
+  insights            AIInsight[]
 
   @@map("users")
 }
@@ -61,7 +66,7 @@ model Transaction {
   amount          Decimal         @db.Decimal(14, 2)
   type            TransactionType
   category        String          @default("Uncategorized")
-  description     String
+  description     String?
   rawDescription  String?
   date            DateTime
   isAIClassified  Boolean         @default(false)

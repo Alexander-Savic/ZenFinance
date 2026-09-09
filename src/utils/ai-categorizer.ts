@@ -10,7 +10,6 @@ export interface CategorizationResult {
   category: string;
 }
 
-// Правила локального ИИ-паpсера по ключевым словам
 function getMockCategory(desc: string, type: string): string {
   const text = desc.toLowerCase();
   
@@ -42,7 +41,6 @@ function getMockCategory(desc: string, type: string): string {
 export async function categorizeTransactions(items: CategorizationInput[]): Promise<CategorizationResult[]> {
   if (!items.length) return [];
 
-  // Имитируем небольшую задержку «мыслительного процесса» ИИ в 800 миллисекунд для красоты анимации
   await new Promise((resolve) => setTimeout(resolve, 800));
 
   return items.map((item) => ({

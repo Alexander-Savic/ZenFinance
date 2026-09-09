@@ -17,7 +17,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Извлекаем реальный ID авторизованного пользователя
     const userId = (session.user as { id: string }).id;
 
     let formData: FormData;

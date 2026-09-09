@@ -3,17 +3,15 @@
 import { useCallback, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UploadCloud, FileSpreadsheet, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { api, type ImportResponse } from '@/lib/api';
+import { api } from '@/lib/api';
 
 type Status = 'idle' | 'dragging' | 'uploading' | 'success' | 'error';
 
-// 1. Объявляем интерфейс пропсов для компонента
 interface UploadDropzoneProps {
-  onUploadSuccess?: () => void;
+  onSuccess?: () => void;
 }
 
-// 2. Принимаем проп onUploadSuccess
-export function UploadDropzone({ onUploadSuccess }: UploadDropzoneProps) {
+export function UploadDropzone({ onSuccess }: UploadDropzoneProps) {
   const [status, setStatus] = useState<Status>('idle');
   const [fileName, setFileName] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
@@ -24,26 +22,16 @@ export function UploadDropzone({ onUploadSuccess }: UploadDropzoneProps) {
       setFileName(file.name);
       setStatus('uploading');
       try {
-        const res: ImportResponse = await api.importFile(file);
-        setMessage(`Imported ${res.totalImported} transactions · ${res.aiClassifiedCount} auto-categorized`);
+        const res = await api.importFile(file);
+        setMessage(`Импортировано ${res.totalImported} транзакций · ${res.aiClassifiedCount} авто-категоризировано`);
         setStatus('success');
-
-        // 3. Вызываем обновляющий коллбэк для главной страницы
-        if (onUploadSuccess) {
-          onUploadSuccess();
-        } else {
-          setTimeout(() => {
-            window.location.reload();
-          }, 2500);
-        }
-      } catch (err: unknown) {
-        console.error(err);
-        const errorMsg = err instanceof Error ? err.message : 'Import failed. Check the file format and try again.';
-        setMessage(errorMsg);
+        onSuccess?.();
+      } catch {
+        setMessage('Импорт не удался. Проверьте формат файла и попробуйте снова.');
         setStatus('error');
       }
     },
-    [onUploadSuccess],
+    [onSuccess],
   );
 
   const onDrop = (e: React.DragEvent) => {
@@ -91,9 +79,9 @@ export function UploadDropzone({ onUploadSuccess }: UploadDropzoneProps) {
               <UploadCloud className="h-6 w-6 text-violet-300" />
             </motion.div>
             <p className="text-sm font-medium text-zinc-200">
-              Drag & drop your bank statement here
+              Перетащите файл выписки сюда
             </p>
-            <p className="text-xs text-zinc-500">CSV, XLS, or XLSX — up to 10MB</p>
+            <p className="text-xs text-zinc-500">CSV, XLS или XLSX — до 10MB</p>
           </motion.div>
         ) : status === 'uploading' ? (
           <motion.div
@@ -104,7 +92,7 @@ export function UploadDropzone({ onUploadSuccess }: UploadDropzoneProps) {
             className="flex flex-col items-center gap-3"
           >
             <Loader2 className="h-8 w-8 animate-spin text-violet-300" />
-            <p className="text-sm text-zinc-300">Parsing & categorizing {fileName} with AI…</p>
+            <p className="text-sm text-zinc-300">Разбор и категоризация {fileName}…</p>
           </motion.div>
         ) : status === 'success' ? (
           <motion.div
