@@ -30,12 +30,14 @@ export async function PUT(req: NextRequest, props: RouteParams) {
     return NextResponse.json({ success: false, message: 'Invalid request body' }, { status: 400 });
   }
 
+  const safeDescription = body.description ?? (existing.description ?? undefined);
+
   const merged: UpdateTransactionInput = {
     id,
     amount: body.amount ?? Number(existing.amount),
     type: body.type ?? (existing.type as 'INCOME' | 'EXPENSE'),
     category: body.category ?? existing.category,
-    description: body.description ?? existing.description,
+    description: safeDescription ? safeDescription.trim() : '',
     date: body.date ?? existing.date.toISOString(),
     accountId: body.accountId ?? existing.accountId,
   };
@@ -58,7 +60,7 @@ export async function PUT(req: NextRequest, props: RouteParams) {
       amount: Math.abs(merged.amount!),
       type: merged.type,
       category: merged.category,
-      description: merged.description!.trim(),
+      description: merged.description ? merged.description.trim() : '',
       date: new Date(merged.date!),
       accountId: merged.accountId,
       isAIClassified: false,
@@ -68,7 +70,12 @@ export async function PUT(req: NextRequest, props: RouteParams) {
   const affectedAccounts = new Set([existing.accountId, updated.accountId]);
   await Promise.all(Array.from(affectedAccounts).map((accId) => recalculateAccountBalance(accId)));
 
-  return NextResponse.json({ success: true, transaction: serializeTransaction(updated) });
+  const formattedTransaction = {
+    ...updated,
+    description: updated.description ?? '',
+  };
+
+  return NextResponse.json({ success: true, transaction: serializeTransaction(formattedTransaction) });
 }
 
 export async function DELETE(_req: NextRequest, props: RouteParams) {
