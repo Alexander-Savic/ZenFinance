@@ -55,10 +55,8 @@ export const api = {
     return request<AnalyticsSummary>(`/api/analytics/summary?${qs.toString()}`);
   },
 
-  // МЕТОД ДЛЯ ИИ-СОВЕТНИКА
   getAdvice: () => request<AdvisorResponse>('/api/ai/advisor'),
 
-  // МЕТОДЫ ДЛЯ НАСТРОЕК
   getSettings: () => request<UserSettingsResponse>('/api/user/settings'),
 
   updateSettings: (data: Partial<UserSettingsResponse>) =>
